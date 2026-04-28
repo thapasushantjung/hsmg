@@ -13,6 +13,8 @@ class Payment extends Model
 
     protected $guarded = [];
 
+    protected $appends = ['due_date_bs', 'paid_date_bs'];
+
     protected $casts = [
         'due_date' => 'date',
         'paid_date' => 'date',
@@ -26,5 +28,15 @@ class Payment extends Model
     public function tenant()
     {
         return $this->belongsTo(Tenant::class);
+    }
+
+    public function getDueDateBsAttribute(): ?string
+    {
+        return $this->due_date ? app(\App\Services\NepaliDateService::class)->toBS($this->due_date) : null;
+    }
+
+    public function getPaidDateBsAttribute(): ?string
+    {
+        return $this->paid_date ? app(\App\Services\NepaliDateService::class)->toBS($this->paid_date) : null;
     }
 }

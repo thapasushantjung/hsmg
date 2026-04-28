@@ -13,6 +13,8 @@ class Booking extends Model
 
     protected $guarded = [];
 
+    protected $appends = ['check_in_date_bs', 'expected_check_out_date_bs', 'actual_check_out_date_bs'];
+
     protected $casts = [
         'check_in_date' => 'date',
         'expected_check_out_date' => 'date',
@@ -32,5 +34,20 @@ class Booking extends Model
     public function payments()
     {
         return $this->hasMany(Payment::class);
+    }
+
+    public function getCheckInDateBsAttribute(): ?string
+    {
+        return $this->check_in_date ? app(\App\Services\NepaliDateService::class)->toBS($this->check_in_date) : null;
+    }
+
+    public function getExpectedCheckOutDateBsAttribute(): ?string
+    {
+        return $this->expected_check_out_date ? app(\App\Services\NepaliDateService::class)->toBS($this->expected_check_out_date) : null;
+    }
+
+    public function getActualCheckOutDateBsAttribute(): ?string
+    {
+        return $this->actual_check_out_date ? app(\App\Services\NepaliDateService::class)->toBS($this->actual_check_out_date) : null;
     }
 }

@@ -13,9 +13,11 @@ interface Payment {
     id: number;
     amount: string;
     type: string;
-    status: string;
     due_date: string;
+    due_date_bs: string | null;
     paid_date: string | null;
+    paid_date_bs: string | null;
+    status: 'pending' | 'paid' | 'overdue' | 'cancelled';
     tenant: Tenant;
     booking: Booking;
 }
@@ -106,7 +108,7 @@ export default function Finance({ payments, stats }: { payments: Payment[]; stat
                                             </td>
                                             <td className="px-4 py-3 capitalize">{payment.type}</td>
                                             <td className="px-4 py-3 font-medium">{formatCurrency(payment.amount)}</td>
-                                            <td className="px-4 py-3 text-muted-foreground">{payment.due_date}</td>
+                                            <td className="px-4 py-3 text-muted-foreground">{payment.due_date_bs}</td>
                                             <td className="px-4 py-3 text-right">
                                                 <Badge 
                                                     variant={

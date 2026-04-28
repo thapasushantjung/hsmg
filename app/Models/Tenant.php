@@ -13,6 +13,8 @@ class Tenant extends Model
 
     protected $guarded = [];
 
+    protected $appends = ['full_name', 'joined_date_bs', 'date_of_birth_bs'];
+
     /**
      * @return array<string, string>
      */
@@ -34,6 +36,16 @@ class Tenant extends Model
         return collect([$this->first_name, $this->middle_name, $this->last_name])
             ->filter()
             ->implode(' ');
+    }
+
+    public function getJoinedDateBsAttribute(): ?string
+    {
+        return $this->joined_date ? app(\App\Services\NepaliDateService::class)->toBS($this->joined_date) : null;
+    }
+
+    public function getDateOfBirthBsAttribute(): ?string
+    {
+        return $this->date_of_birth ? app(\App\Services\NepaliDateService::class)->toBS($this->date_of_birth) : null;
     }
 
     public function bookings()

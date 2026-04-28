@@ -1,5 +1,5 @@
 import { Link } from '@inertiajs/react';
-import { BedDouble, BookOpen, FolderGit2, LayoutGrid, Users } from 'lucide-react';
+import { BedDouble, BookOpen, FolderGit2, LayoutGrid, Users, CalendarDays } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -14,6 +14,7 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { bedGrid, dashboard, finance, tenants } from '@/routes';
+import calendar from '@/routes/calendar';
 import type { NavItem } from '@/types';
 
 const NepaliRupee = ({ className, ...props }: React.SVGProps<SVGSVGElement>) => (
@@ -55,6 +56,11 @@ const footerNavItems: NavItem[] = [
         title: 'Documentation',
         href: 'https://laravel.com/docs/starter-kits#react',
         icon: BookOpen,
+    },
+    {
+        title: 'Calendar Settings',
+        href: calendar.index().url,
+        icon: CalendarDays,
     },
 ];
 
