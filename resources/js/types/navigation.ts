@@ -9,6 +9,6 @@ export type BreadcrumbItem = {
 export type NavItem = {
     title: string;
     href: NonNullable<InertiaLinkProps['href']>;
-    icon?: LucideIcon | null;
+    icon?: LucideIcon | React.ComponentType<React.SVGProps<SVGSVGElement>> | null;
     isActive?: boolean;
 };

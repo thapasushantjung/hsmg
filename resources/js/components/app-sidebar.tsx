@@ -1,5 +1,5 @@
 import { Link } from '@inertiajs/react';
-import { BedDouble, BookOpen, DollarSign, FolderGit2, LayoutGrid, Users } from 'lucide-react';
+import { BedDouble, BookOpen, FolderGit2, LayoutGrid, Users } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -15,6 +15,12 @@ import {
 } from '@/components/ui/sidebar';
 import { bedGrid, dashboard, finance, tenants } from '@/routes';
 import type { NavItem } from '@/types';
+
+const NepaliRupee = ({ className, ...props }: React.SVGProps<SVGSVGElement>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}>
+        <text x="50%" y="50%" dominantBaseline="central" textAnchor="middle" fill="currentColor" stroke="none" fontSize="22" fontWeight="bold">रु</text>
+    </svg>
+);
 
 const mainNavItems: NavItem[] = [
     {
@@ -35,7 +41,7 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Finance',
         href: finance(),
-        icon: DollarSign,
+        icon: NepaliRupee,
     },
 ];
 
