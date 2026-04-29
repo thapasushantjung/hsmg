@@ -39,7 +39,11 @@ interface Tenant {
     monthly_rent_agreed: string | null;
     meal_preference: string | null;
     status: string;
-    bookings: Booking[];
+    active_booking?: {
+        current_bed_assignment?: {
+            bed: Bed
+        }
+    };
 }
 
 export default function Tenants({ tenants }: { tenants: Tenant[] }) {
@@ -67,7 +71,6 @@ export default function Tenants({ tenants }: { tenants: Tenant[] }) {
                                 </thead>
                                 <tbody>
                                     {tenants.map((tenant) => {
-                                        const activeBooking = tenant.bookings.find(b => b.status === 'active');
                                         return (
                                             <tr key={tenant.id} className="border-b last:border-0 hover:bg-muted/30">
                                                 <td className="px-4 py-3 font-medium">{tenant.full_name}</td>
@@ -77,10 +80,10 @@ export default function Tenants({ tenants }: { tenants: Tenant[] }) {
                                                     </Badge>
                                                 </td>
                                                 <td className="px-4 py-3">
-                                                    {activeBooking ? (
+                                                    {tenant.active_booking?.current_bed_assignment ? (
                                                         <div className="flex flex-col">
-                                                            <span className="font-medium">Bed {activeBooking.bed.name}</span>
-                                                            <span className="text-xs text-muted-foreground">{activeBooking.bed.room.name}, {activeBooking.bed.room.floor.name}</span>
+                                                            <span className="font-medium">Bed {tenant.active_booking.current_bed_assignment.bed.name}</span>
+                                                            <span className="text-xs text-muted-foreground">{tenant.active_booking.current_bed_assignment.bed.room.name}, {tenant.active_booking.current_bed_assignment.bed.room.floor.name}</span>
                                                         </div>
                                                     ) : (
                                                         <span className="text-muted-foreground italic">Unassigned</span>

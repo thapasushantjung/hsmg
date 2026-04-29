@@ -20,7 +20,12 @@ interface BedData {
     name: string;
     status: 'available' | 'occupied' | 'maintenance';
     monthly_rate: number;
-    bookings: Booking[];
+    current_assignment?: {
+        booking: {
+            status: string;
+            tenant: Tenant;
+        }
+    };
 }
 
 interface Room {
@@ -77,7 +82,7 @@ export default function BedGrid({ floors }: { floors: Floor[] }) {
                                         </CardHeader>
                                         <CardContent className="p-4 grid grid-cols-2 gap-3">
                                             {room.beds.map((bed) => {
-                                                const activeBooking = bed.bookings.find(b => b.status === 'active');
+                                                const activeBooking = bed.current_assignment?.booking;
                                                 const isOccupied = bed.status === 'occupied';
 
                                                 return (

@@ -7,7 +7,7 @@ import { finance as financeRoute } from '@/routes';
 interface Tenant { full_name: string }
 interface Room { name: string }
 interface Bed { name: string; room: Room }
-interface Booking { bed: Bed }
+interface Booking { current_bed_assignment?: { bed: Bed } }
 
 interface Payment {
     id: number;
@@ -104,7 +104,7 @@ export default function Finance({ payments, stats }: { payments: Payment[]; stat
                                         <tr key={payment.id} className="border-b last:border-0 hover:bg-muted/30">
                                             <td className="px-4 py-3 font-medium">{payment.tenant.full_name}</td>
                                             <td className="px-4 py-3 text-muted-foreground">
-                                                {payment.booking ? `Bed ${payment.booking.bed.name}, Room ${payment.booking.bed.room.name}` : '-'}
+                                                {payment.booking?.current_bed_assignment ? `Bed ${payment.booking.current_bed_assignment.bed.name}, Room ${payment.booking.current_bed_assignment.bed.room.name}` : '-'}
                                             </td>
                                             <td className="px-4 py-3 capitalize">{payment.type}</td>
                                             <td className="px-4 py-3 font-medium">{formatCurrency(payment.amount)}</td>

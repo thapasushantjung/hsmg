@@ -8,7 +8,7 @@ class FinanceController extends Controller
 {
     public function index()
     {
-        $payments = Payment::with(['tenant', 'booking.bed.room'])->latest()->get();
+        $payments = Payment::with(['tenant', 'booking.currentBedAssignment.bed.room'])->latest()->get();
 
         $payments->each(function (Payment $payment) {
             $payment->tenant?->append('full_name');

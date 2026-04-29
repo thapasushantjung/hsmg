@@ -14,13 +14,18 @@ return new class extends Migration
         Schema::create('bookings', function (Blueprint $table) {
             $table->id();
             $table->foreignId('tenant_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('bed_id')->constrained()->cascadeOnDelete();
             $table->date('check_in_date');
             $table->date('expected_check_out_date')->nullable();
             $table->date('actual_check_out_date')->nullable();
-            $table->enum('status', ['active', 'completed', 'cancelled'])->default('active');
+            $table->timestamp('checked_in_at')->nullable();
+            $table->timestamp('checked_out_at')->nullable();
+            $table->string('status')->default('active')->index();
             $table->decimal('deposit_amount', 10, 2)->default(0);
             $table->decimal('rent_amount', 10, 2);
+            $table->string('checkout_reason')->nullable();
+            $table->text('notes')->nullable();
+            $table->foreignId('created_by')->nullable()->constrained('users');
+            $table->foreignId('updated_by')->nullable()->constrained('users');
             $table->timestamps();
         });
     }

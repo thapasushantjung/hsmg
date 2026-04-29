@@ -8,7 +8,7 @@ class TenantController extends Controller
 {
     public function index()
     {
-        $tenants = Tenant::with(['bookings.bed.room.floor'])->latest()->get();
+        $tenants = Tenant::with(['activeBooking.currentBedAssignment.bed.room.floor'])->latest()->get();
 
         $tenants->each(function (Tenant $tenant) {
             $tenant->append('full_name');

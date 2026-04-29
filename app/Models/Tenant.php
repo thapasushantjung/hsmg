@@ -2,9 +2,13 @@
 
 namespace App\Models;
 
+use App\Enums\BookingStatus;
+use App\Services\NepaliDateService;
 use Database\Factories\TenantFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Tenant extends Model
 {
@@ -40,25 +44,40 @@ class Tenant extends Model
 
     public function getJoinedDateBsAttribute(): ?string
     {
-        return $this->joined_date ? app(\App\Services\NepaliDateService::class)->toBS($this->joined_date) : null;
+        return $this->joined_date ? app(NepaliDateService::class)->toBS($this->joined_date) : null;
     }
 
     public function getDateOfBirthBsAttribute(): ?string
     {
-        return $this->date_of_birth ? app(\App\Services\NepaliDateService::class)->toBS($this->date_of_birth) : null;
+        return $this->date_of_birth ? app(NepaliDateService::class)->toBS($this->date_of_birth) : null;
     }
 
-    public function bookings()
+    public function bookings(): HasMany
     {
         return $this->hasMany(Booking::class);
     }
 
-    public function payments()
+    /**
+     * The tenant's current active booking (stay).
+     */
+    public function activeBooking(): HasOne
+    {
+        return $this->hasOne(Booking::class)
+            ->where('status', BookingStatus::Active)
+            ->latestOfMany();
+    }
+
+    public function logs(): HasMany
+    {
+        return $this->hasMany(TenantLog::class);
+    }
+
+    public function payments(): HasMany
     {
         return $this->hasMany(Payment::class);
     }
 
-    public function complaints()
+    public function complaints(): HasMany
     {
         return $this->hasMany(Complaint::class);
     }

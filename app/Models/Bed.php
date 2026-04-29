@@ -5,6 +5,9 @@ namespace App\Models;
 use Database\Factories\BedFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Bed extends Model
 {
@@ -13,13 +16,23 @@ class Bed extends Model
 
     protected $guarded = [];
 
-    public function room()
+    public function room(): BelongsTo
     {
         return $this->belongsTo(Room::class);
     }
 
-    public function bookings()
+    public function bedAssignments(): HasMany
     {
-        return $this->hasMany(Booking::class);
+        return $this->hasMany(BedAssignment::class);
+    }
+
+    /**
+     * The current (active) bed assignment — null means the bed is free.
+     */
+    public function currentAssignment(): HasOne
+    {
+        return $this->hasOne(BedAssignment::class)
+            ->whereNull('ended_at')
+            ->latestOfMany('started_at');
     }
 }
