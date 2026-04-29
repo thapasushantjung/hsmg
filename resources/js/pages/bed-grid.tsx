@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import { Head } from '@inertiajs/react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { BedActionModal } from '@/components/bed-action-modal';
 
 import { bedGrid } from '@/routes';
 
@@ -43,6 +45,15 @@ interface Floor {
 }
 
 export default function BedGrid({ floors }: { floors: Floor[] }) {
+    const [selectedBed, setSelectedBed] = useState<any>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const handleBedClick = (bed: any, roomName: string) => {
+        if (bed.status === 'maintenance') return; // Don't open for maintenance
+        setSelectedBed({ ...bed, room_name: roomName });
+        setIsModalOpen(true);
+    };
+
     const getBedColor = (status: string) => {
         switch (status) {
             case 'available': return 'bg-emerald-100 border-emerald-500 text-emerald-800 dark:bg-emerald-900/30 dark:border-emerald-500 dark:text-emerald-400';
@@ -88,6 +99,7 @@ export default function BedGrid({ floors }: { floors: Floor[] }) {
                                                 return (
                                                     <div 
                                                         key={bed.id} 
+                                                        onClick={() => handleBedClick(bed, room.name)}
                                                         className={`flex items-center justify-center h-20 p-3 rounded-lg border-2 cursor-pointer transition-all hover:shadow-md ${getBedColor(bed.status)}`}
                                                     >
                                                         <span className="font-bold">Bed {bed.name}</span>
@@ -108,6 +120,12 @@ export default function BedGrid({ floors }: { floors: Floor[] }) {
                     )}
                 </div>
             </div>
+
+            <BedActionModal 
+                isOpen={isModalOpen} 
+                onClose={() => setIsModalOpen(false)} 
+                bed={selectedBed} 
+            />
         </>
     );
 }

@@ -25,6 +25,9 @@ class BookingService
     public function checkIn(Tenant $tenant, Bed $bed, array $data): Booking
     {
         return DB::transaction(function () use ($tenant, $bed, $data) {
+            $lockedBed = Bed::where('id', $bed->id)->lockForUpdate()->firstOrFail();
+            throw_if($lockedBed->status !== 'available', \Exception::class, 'Bed is no longer available.');
+
             $booking = Booking::create([
                 'tenant_id' => $tenant->id,
                 'check_in_date' => now()->toDateString(),
@@ -39,11 +42,11 @@ class BookingService
 
             BedAssignment::create([
                 'booking_id' => $booking->id,
-                'bed_id' => $bed->id,
+                'bed_id' => $lockedBed->id,
                 'started_at' => now(),
             ]);
 
-            $bed->update(['status' => 'occupied']);
+            $lockedBed->update(['status' => 'occupied']);
 
             TenantLog::create([
                 'tenant_id' => $tenant->id,
@@ -62,6 +65,8 @@ class BookingService
     public function transferBed(Booking $booking, Bed $newBed, ?TransferReason $reason = null): BedAssignment
     {
         return DB::transaction(function () use ($booking, $newBed, $reason) {
+            $lockedNewBed = Bed::where('id', $newBed->id)->lockForUpdate()->firstOrFail();
+            throw_if($lockedNewBed->status !== 'available', \Exception::class, 'The requested bed is no longer available.');
             $currentAssignment = $booking->bedAssignments()
                 ->current()
                 ->firstOrFail();
@@ -75,12 +80,12 @@ class BookingService
 
             $newAssignment = BedAssignment::create([
                 'booking_id' => $booking->id,
-                'bed_id' => $newBed->id,
+                'bed_id' => $lockedNewBed->id,
                 'started_at' => now(),
             ]);
 
             $oldBed->update(['status' => 'available']);
-            $newBed->update(['status' => 'occupied']);
+            $lockedNewBed->update(['status' => 'occupied']);
 
             $booking->update(['updated_by' => auth()->id()]);
 

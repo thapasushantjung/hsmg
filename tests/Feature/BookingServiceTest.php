@@ -147,3 +147,31 @@ it('cancels a booking', function () {
         'action' => TenantLogAction::Cancelled->value,
     ]);
 });
+
+it('throws an exception if bed is already occupied during check in', function () {
+    $tenant = Tenant::factory()->create();
+    $bed = Bed::factory()->create(['status' => 'occupied']);
+
+    $user = User::factory()->create();
+    $this->actingAs($user);
+
+    $service = new BookingService;
+
+    expect(fn () => $service->checkIn($tenant, $bed, ['rent_amount' => 10000]))
+        ->toThrow(Exception::class, 'Bed is no longer available.');
+});
+
+it('throws an exception if new bed is already occupied during transfer', function () {
+    $tenant = Tenant::factory()->create();
+    $oldBed = Bed::factory()->create(['status' => 'available']);
+    $newBed = Bed::factory()->create(['status' => 'occupied']);
+
+    $user = User::factory()->create();
+    $this->actingAs($user);
+
+    $service = new BookingService;
+    $booking = $service->checkIn($tenant, $oldBed, ['rent_amount' => 10000]);
+
+    expect(fn () => $service->transferBed($booking, $newBed, TransferReason::Upgrade))
+        ->toThrow(Exception::class, 'The requested bed is no longer available.');
+});
